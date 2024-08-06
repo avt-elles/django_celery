@@ -32,20 +32,16 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "jazzmin",
-
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "django_celery_results",
     "django_celery_beat",
-
     "rest_framework",
-    
-    'stocks'
+    "stocks",
 ]
 
 MIDDLEWARE = [
@@ -131,6 +127,6 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CELERY_BROKER_URL = 'pyamqp://guest@localhost//'
-CELERY_TIMEZONE = 'America/Sao_Paulo'
-CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BROKER_URL = "pyamqp://guest@localhost//"
+CELERY_TIMEZONE = "America/Sao_Paulo"
+CELERY_RESULT_BACKEND = "django-db"

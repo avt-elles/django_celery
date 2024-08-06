@@ -8,44 +8,31 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
 from stocks.models import Stock
 
+
 @shared_task
 def get_stock_price(stock_name):
-  options = Options()
-  options.add_argument('--headless')
+    options = Options()
+    options.add_argument("--headless")
 
-  driver = webdriver.Chrome(
-    options=options,
-    service=ChromeService
-    (ChromeDriverManager().install())
-  )
+    driver = webdriver.Chrome(
+        options=options, service=ChromeService(ChromeDriverManager().install())
+    )
 
-  url = 'https://www.google.com'
+    url = "https://www.google.com"
 
-  driver.get(url)
+    driver.get(url)
 
-  search_input = driver.find_element(
-    By.XPATH,
-    '//textarea[@aria-label="Pesquisar"]'
-  )
-  search_input.send_keys(f'preço da ação {stock_name}')
-  search_input.send_keys(Keys.ENTER)
+    search_input = driver.find_element(By.XPATH, '//textarea[@aria-label="Pesquisar"]')
+    search_input.send_keys(f"preço da ação {stock_name}")
+    search_input.send_keys(Keys.ENTER)
 
-  sleep(2)
+    sleep(2)
 
-  price_div = driver.find_element(
-    By.XPATH,
-    '//div[@data-attrid="Price"]'
-  )
-  price = price_div.find_elements(
-    By.TAG_NAME,
-    'span'
-  )[2].text.replace(',', '.')
+    price_div = driver.find_element(By.XPATH, '//div[@data-attrid="Price"]')
+    price = price_div.find_elements(By.TAG_NAME, "span")[2].text.replace(",", ".")
 
-  driver.quit()
+    driver.quit()
 
-  Stock.objects.create(
-    name=stock_name,
-    price=float(price)
-  )
+    Stock.objects.create(name=stock_name, price=float(price))
 
-  return price
+    return price
