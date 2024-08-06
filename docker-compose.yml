@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - ./data/db:/var/lib/postgresql/data 
+    environment:
+      - POSTGRESQL_DB=postgres
+      - POSTGRESQL_USER=postgres
+      - POSTGRESQL_PASSWORD=postgres
+  
+  rabbitmq:
+    image: rabbitmq:3-managment
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+  
+  web:
+    build: . 
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - rabbitmq
+  
+  celery: 
+    build: .
+    command: celery -A core worker -l info
+    restart: always
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - rabbitmq
+  
+  celery-beat: 
+    build: .
+    command: celery -A core worker -l info --scheduler django_celery_beat.scheduler:DatabaseScheduler
+    restart: always
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - rabbitmq
